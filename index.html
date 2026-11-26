@@ -1,0 +1,2915 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProPlay — Games &amp; Websites Hub</title>
+    <meta
+      name="description"
+      content="A curated showcase hub to organize your games and websites and launch them directly in one click."
+    />
+    <meta property="og:title" content="ProPlay — Games &amp; Websites Hub" />
+    <meta
+      property="og:description"
+      content="A curated showcase hub to organize your games and websites and launch them directly in one click."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0d;
+        --surface: #141418;
+        --surface-hover: #1b1b21;
+        --border: #27272a;
+        --border-strong: #3f3f46;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --muted-dim: #71717a;
+        --accent: #f2b705;
+        --accent-hover: #facc15;
+        --ink: #09090b;
+        --danger: #dc2626;
+        --danger-hover: #ef4444;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+        color-scheme: dark;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-height: 100vh;
+        background-color: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: rgba(242, 183, 5, 0.25);
+        color: #fde047;
+      }
+
+      h1,
+      h2,
+      h3,
+      .font-display {
+        font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .font-mono {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      .tabular-nums {
+        font-variant-numeric: tabular-nums;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Top Bar (3-Zone Contract) */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        border-bottom: 1px solid rgba(39, 39, 42, 0.9);
+        background: rgba(10, 10, 13, 0.92);
+        backdrop-filter: blur(12px);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+        padding: 16px 24px;
+        max-width: 1152px;
+        margin: 0 auto;
+      }
+
+      .brand-wordmark {
+        font-family: "Outfit", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .primary-nav {
+        display: none;
+        align-items: center;
+        gap: 28px;
+      }
+
+      @media (min-width: 768px) {
+        .primary-nav {
+          display: flex;
+        }
+      }
+
+      .nav-link {
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 4px 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 150ms ease, border-color 150ms ease;
+      }
+
+      .nav-link:hover {
+        color: #ffffff;
+      }
+
+      .nav-link.active {
+        color: #ffffff;
+        border-bottom-color: var(--accent);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 8px;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-accent {
+        background: var(--accent);
+        color: var(--ink);
+        border: none;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .btn-accent:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      .btn-accent-lg {
+        background: var(--accent);
+        color: var(--ink);
+        border: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .btn-accent-lg:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      .btn-light {
+        background: #ffffff;
+        color: var(--ink);
+        border: none;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .btn-light:hover {
+        background: #e4e4e7;
+      }
+
+      .btn-dark {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .btn-dark:hover:not(:disabled) {
+        border-color: #71717a;
+        background: #18181d;
+      }
+
+      .btn-toolbar {
+        background: var(--surface);
+        color: #d4d4d8;
+        border: 1px solid var(--border);
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .btn-toolbar:hover:not(:disabled) {
+        border-color: var(--border-strong);
+        color: #ffffff;
+      }
+
+      .btn-toolbar.active {
+        border-color: var(--accent);
+        background: rgba(242, 183, 5, 0.14);
+        color: var(--accent);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: #ffffff;
+        border: none;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: var(--danger-hover);
+      }
+
+      .btn-danger-outline {
+        background: rgba(127, 29, 29, 0.25);
+        color: #fca5a5;
+        border: 1px solid rgba(127, 29, 29, 0.7);
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .btn-danger-outline:hover:not(:disabled) {
+        background: rgba(127, 29, 29, 0.5);
+      }
+
+      /* Hero Section */
+      .hero-section {
+        padding: 48px 0 40px;
+      }
+
+      @media (min-width: 768px) {
+        .hero-section {
+          padding: 56px 0 40px;
+        }
+      }
+
+      .hero-split {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      @media (min-width: 1024px) {
+        .hero-split {
+          grid-template-columns: 5fr 7fr;
+        }
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .hero-kicker {
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        color: var(--accent);
+      }
+
+      .hero-headline {
+        margin-top: 16px;
+        max-width: 28rem;
+        font-size: clamp(2.25rem, 3.8vw, 3.25rem);
+        line-height: 1.06;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: #ffffff;
+        text-wrap: balance;
+      }
+
+      .hero-sub {
+        margin-top: 20px;
+        max-width: 28rem;
+        font-size: 16px;
+        line-height: 1.6;
+        letter-spacing: 0.01em;
+        color: var(--muted);
+      }
+
+      .hero-actions {
+        margin-top: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      /* Spotlight Card */
+      .spotlight-card {
+        position: relative;
+        display: block;
+        height: 100%;
+        min-height: 320px;
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.35);
+      }
+
+      .spotlight-media {
+        width: 100%;
+        height: 100%;
+        min-height: 320px;
+        object-fit: cover;
+        display: block;
+        transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .spotlight-card:hover .spotlight-media {
+        transform: scale(1.02);
+      }
+
+      .spotlight-scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.35) 55%, transparent);
+        pointer-events: none;
+      }
+
+      .spotlight-overlay {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 24px 28px;
+      }
+
+      .spotlight-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #d4d4d8;
+      }
+
+      .spotlight-meta-accent {
+        color: var(--accent);
+      }
+
+      .spotlight-bottom {
+        margin-top: 8px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .spotlight-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .spotlight-desc {
+        margin-top: 6px;
+        font-size: 14px;
+        color: #d4d4d8;
+        max-width: 32rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .spotlight-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 320px;
+        border-radius: 16px;
+        border: 1px dashed var(--border);
+        background: var(--surface);
+        padding: 32px;
+        text-align: center;
+      }
+
+      /* 4-Column Summary Strip */
+      .stats-strip {
+        margin-top: 48px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      @media (min-width: 640px) {
+        .stats-strip {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .stat-cell {
+        padding: 20px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stat-cell:nth-child(odd) {
+        padding-left: 0;
+      }
+
+      .stat-cell:nth-last-child(-n + 2) {
+        border-bottom: none;
+      }
+
+      @media (min-width: 640px) {
+        .stat-cell {
+          padding: 20px 24px;
+          border-bottom: none;
+          border-right: 1px solid var(--border);
+        }
+
+        .stat-cell:first-child {
+          padding-left: 0;
+        }
+
+        .stat-cell:last-child {
+          border-right: none;
+        }
+      }
+
+      .stat-value {
+        font-family: "Outfit", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+      }
+
+      .stat-value.accent {
+        color: var(--accent);
+      }
+
+      .stat-label {
+        margin-top: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      /* Catalog Section */
+      .catalog-section {
+        padding: 32px 0 80px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 24px;
+      }
+
+      @media (min-width: 1024px) {
+        .toolbar {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      .toolbar-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .segmented-control {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .seg-btn {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: background-color 150ms ease, color 150ms ease;
+      }
+
+      .seg-btn:hover {
+        color: #ffffff;
+      }
+
+      .seg-btn.active {
+        background: var(--accent);
+        color: var(--ink);
+      }
+
+      .search-wrap {
+        position: relative;
+        flex: 1 1 220px;
+      }
+
+      @media (min-width: 640px) {
+        .search-wrap {
+          width: 260px;
+          flex: 0 0 auto;
+        }
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted-dim);
+        pointer-events: none;
+        display: flex;
+      }
+
+      .search-input {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 8px 12px 8px 36px;
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      .search-input::placeholder {
+        color: var(--muted-dim);
+      }
+
+      .search-input:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+
+      .sort-select {
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #e4e4e7;
+      }
+
+      /* Showcase Grid */
+      .cards-grid {
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      @media (min-width: 640px) {
+        .cards-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .cards-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: border-color 180ms ease;
+      }
+
+      .card:hover {
+        border-color: var(--border-strong);
+      }
+
+      .card-link {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .card-thumb {
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        overflow: hidden;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+      }
+
+      .card-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .card:hover .card-thumb img {
+        transform: scale(1.03);
+      }
+
+      .cover-fallback {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #18181d 0%, #101014 55%, #1f1a0d 100%);
+      }
+
+      .cover-fallback-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(63, 63, 70, 0.8);
+        background: rgba(24, 24, 27, 0.9);
+        color: var(--accent);
+      }
+
+      .cover-fallback-title {
+        max-width: 85%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: "Outfit", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: #f4f4f5;
+      }
+
+      .cover-fallback-host {
+        margin-top: 4px;
+        max-width: 85%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .card-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+      }
+
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        overflow: hidden;
+      }
+
+      .card-meta-type {
+        font-weight: 500;
+        color: #e4e4e7;
+      }
+
+      .card-meta-host {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .card-title {
+        margin-top: 8px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.015em;
+        color: #ffffff;
+        transition: color 150ms ease;
+      }
+
+      .card:hover .card-title {
+        color: var(--accent);
+      }
+
+      .card-desc {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.55;
+        letter-spacing: 0.01em;
+        color: var(--muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-footer {
+        margin-top: 20px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(39, 39, 42, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d4d4d8;
+        transition: color 150ms ease;
+      }
+
+      .card:hover .card-footer {
+        color: var(--accent);
+      }
+
+      .card-manage-bar {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 8px;
+        border: 1px solid var(--border-strong);
+        background: rgba(10, 10, 13, 0.92);
+        backdrop-filter: blur(6px);
+      }
+
+      .icon-action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        transition: background-color 150ms ease, color 150ms ease;
+      }
+
+      .icon-action-btn:hover {
+        background: #27272a;
+        color: #ffffff;
+      }
+
+      .icon-action-btn.starred {
+        background: rgba(242, 183, 5, 0.2);
+        color: var(--accent);
+      }
+
+      .icon-action-btn.delete:hover {
+        background: rgba(127, 29, 29, 0.7);
+        color: #fca5a5;
+      }
+
+      /* Empty / Error States */
+      .empty-box {
+        margin-top: 40px;
+        border-radius: 16px;
+        border: 1px dashed var(--border);
+        background: var(--surface);
+        padding: 64px 24px;
+        text-align: center;
+      }
+
+      .error-banner {
+        margin-top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(127, 29, 29, 0.7);
+        background: rgba(69, 10, 10, 0.65);
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #fecaca;
+      }
+
+      /* Footer */
+      .site-footer {
+        border-top: 1px solid rgba(39, 39, 42, 0.9);
+        background: var(--bg);
+      }
+
+      .footer-inner {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--muted-dim);
+      }
+
+      @media (min-width: 640px) {
+        .footer-inner {
+          flex-direction: row;
+          align-items: center;
+        }
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .footer-link-btn {
+        background: transparent;
+        border: none;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .footer-link-btn:hover {
+        color: #ffffff;
+      }
+
+      /* Modals */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-backdrop.open {
+        display: flex;
+      }
+
+      .modal-panel {
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 24px;
+        color: var(--text);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      }
+
+      @media (min-width: 640px) {
+        .modal-panel {
+          padding: 32px;
+        }
+      }
+
+      .modal-sm {
+        max-width: 400px;
+      }
+
+      .modal-md {
+        max-width: 600px;
+      }
+
+      .modal-lg {
+        max-width: 672px;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+      }
+
+      .modal-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+
+      .modal-close-btn:hover {
+        background: #27272a;
+        color: #ffffff;
+      }
+
+      .form-stack {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #e4e4e7;
+      }
+
+      .text-input,
+      .textarea-input {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        padding: 10px 14px;
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      .text-input:focus,
+      .textarea-input:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+
+      .textarea-input {
+        resize: none;
+      }
+
+      .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      @media (min-width: 640px) {
+        .input-row {
+          flex-direction: row;
+        }
+      }
+
+      .presets-grid {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .preset-btn {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+      }
+
+      .preset-btn.selected {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(242, 183, 5, 0.35);
+      }
+
+      .preset-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .alert-error {
+        border-radius: 8px;
+        border: 1px solid rgba(127, 29, 29, 0.7);
+        background: rgba(69, 10, 10, 0.65);
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fecaca;
+      }
+
+      .alert-success {
+        border-radius: 8px;
+        border: 1px solid rgba(146, 64, 14, 0.6);
+        background: rgba(69, 26, 3, 0.45);
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fde047;
+      }
+
+      .settings-section {
+        border-top: 1px solid var(--border);
+        padding-top: 24px;
+      }
+
+      .remove-list {
+        margin-top: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        overflow: hidden;
+      }
+
+      .remove-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .remove-row:last-child {
+        border-bottom: none;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#top" id="brandWordmark" class="brand-wordmark">ProPlay</a>
+
+        <nav aria-label="Primary categories" class="primary-nav">
+          <button type="button" class="nav-link active" data-nav="all">All Works</button>
+          <button type="button" class="nav-link" data-nav="game">Games</button>
+          <button type="button" class="nav-link" data-nav="website">Websites</button>
+          <a href="#spotlight" class="nav-link">Spotlight</a>
+        </nav>
+
+        <button type="button" id="headerAddBtn" class="btn btn-accent">
+          <span aria-hidden="true">+</span> Add Work
+        </button>
+      </div>
+    </header>
+
+    <main id="top" class="container">
+      <section id="spotlight" class="hero-section">
+        <div class="hero-split">
+          <div class="hero-copy">
+            <div>
+              <p class="hero-kicker">Direct-Launch Arcade &amp; Web Deck</p>
+              <h1 id="heroHeadline" class="hero-headline">Instant-launch arcade &amp; web builds.</h1>
+              <p id="heroSubheadline" class="hero-sub">
+                Every game and website in one sleek darkroom hub. Click any tile to launch directly.
+              </p>
+            </div>
+
+            <div class="hero-actions">
+              <a href="#catalog" class="btn btn-light">Browse library &#8599;</a>
+              <button type="button" id="heroAddBtn" class="btn btn-dark">
+                <span style="color: var(--accent)">+</span> Add game or site
+              </button>
+            </div>
+          </div>
+
+          <div id="spotlightMount"></div>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat-cell">
+            <div id="statTotal" class="stat-value tabular-nums">0</div>
+            <div class="stat-label">Published works</div>
+          </div>
+          <div class="stat-cell">
+            <div id="statGames" class="stat-value tabular-nums">0</div>
+            <div class="stat-label">Playable games</div>
+          </div>
+          <div class="stat-cell">
+            <div id="statWebsites" class="stat-value tabular-nums">0</div>
+            <div class="stat-label">Live websites</div>
+          </div>
+          <div class="stat-cell">
+            <div id="statLaunches" class="stat-value accent tabular-nums">0</div>
+            <div class="stat-label">Direct launches</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="catalog" class="catalog-section">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div role="tablist" aria-label="Filter by type" class="segmented-control">
+              <button type="button" role="tab" aria-selected="true" class="seg-btn active" data-filter="all">
+                All
+              </button>
+              <button type="button" role="tab" aria-selected="false" class="seg-btn" data-filter="game">
+                Games
+              </button>
+              <button type="button" role="tab" aria-selected="false" class="seg-btn" data-filter="website">
+                Websites
+              </button>
+            </div>
+
+            <div class="search-wrap">
+              <span class="search-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              </span>
+              <input
+                id="searchInput"
+                type="search"
+                class="search-input"
+                placeholder="Search games or URLs..."
+                aria-label="Search games or websites"
+              />
+            </div>
+          </div>
+
+          <div class="toolbar-group">
+            <label for="sortSelect" class="hidden">Sort works</label>
+            <select id="sortSelect" class="sort-select" aria-label="Sort works">
+              <option value="featured">Featured First</option>
+              <option value="newest">Newest Added</option>
+              <option value="visits">Most Launched</option>
+              <option value="alpha">Alphabetical</option>
+            </select>
+
+            <button type="button" id="manageBtn" class="btn btn-toolbar">Manage</button>
+            <button type="button" id="toolbarSettingsBtn" class="btn btn-toolbar hidden">Settings</button>
+          </div>
+        </div>
+
+        <div id="loadErrorBanner" class="error-banner hidden">
+          <span id="loadErrorText"></span>
+          <button type="button" id="retryLoadBtn" class="btn btn-danger">Retry</button>
+        </div>
+
+        <div id="catalogMount"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span id="footerBrand" class="font-display" style="font-size: 14px; font-weight: 700; color: #ffffff">
+            ProPlay
+          </span>
+          <span aria-hidden="true">·</span>
+          <span id="footerCount" class="tabular-nums">0 curated links</span>
+        </div>
+
+        <div class="footer-links">
+          <a href="/api/export/vercel" download="proplay-vercel.zip" id="footerVercelLink" class="footer-link-btn">
+            Vercel Folder (.zip)
+          </a>
+          <a href="/api/export/html" download="proplay.html" id="footerHtmlLink" class="footer-link-btn">
+            Download HTML
+          </a>
+          <button type="button" id="footerAddBtn" class="footer-link-btn">Add work</button>
+          <button type="button" id="footerSettingsBtn" class="footer-link-btn">Settings &amp; backup</button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Add / Edit Item Modal -->
+    <div id="itemModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
+      <div class="modal-panel modal-lg">
+        <div class="modal-header">
+          <div>
+            <h2 id="itemModalTitle" class="font-display" style="font-size: 24px; font-weight: 700; color: #ffffff">
+              Add a game or website
+            </h2>
+            <p style="margin-top: 4px; font-size: 14px; color: var(--muted)">
+              Visitors who click this card will go directly to your URL.
+            </p>
+          </div>
+          <button type="button" id="closeItemModalBtn" class="modal-close-btn" aria-label="Close dialog">
+            &#10005;
+          </button>
+        </div>
+
+        <form id="itemForm" class="form-stack">
+          <div id="itemErrorBox" class="alert-error hidden" role="alert"></div>
+
+          <div>
+            <span class="field-label">Type</span>
+            <div class="segmented-control">
+              <button type="button" class="seg-btn active" data-item-type="game">Game</button>
+              <button type="button" class="seg-btn" data-item-type="website">Website</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="workUrl" class="field-label">Destination URL</label>
+            <div class="input-row">
+              <input
+                id="workUrl"
+                type="text"
+                class="text-input font-mono"
+                placeholder="https://yourgame.vercel.app"
+              />
+              <button type="button" id="autoFillBtn" class="btn btn-toolbar" style="padding: 10px 16px; font-size: 13px">
+                Auto-fill
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="workTitle" class="field-label">Title</label>
+            <input
+              id="workTitle"
+              type="text"
+              maxlength="80"
+              class="text-input"
+              placeholder="e.g., Galaga"
+            />
+          </div>
+
+          <div>
+            <label for="workDesc" class="field-label">
+              Short description <span style="color: var(--muted-dim); font-weight: 400">(optional)</span>
+            </label>
+            <textarea
+              id="workDesc"
+              rows="2"
+              maxlength="240"
+              class="textarea-input"
+              placeholder="One or two sentences about how to play or what the website does."
+            ></textarea>
+          </div>
+
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px">
+              <label for="workCover" class="field-label" style="margin-bottom: 0">
+                Cover image <span style="color: var(--muted-dim); font-weight: 400">(optional)</span>
+              </label>
+              <button
+                type="button"
+                id="uploadCoverBtn"
+                style="background: none; border: none; color: var(--accent); font-size: 12px; font-weight: 600"
+              >
+                Upload image
+              </button>
+              <input
+                id="coverFileInput"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                class="hidden"
+              />
+            </div>
+
+            <input
+              id="workCover"
+              type="text"
+              class="text-input"
+              placeholder="Paste an image URL or choose a preset cover below"
+            />
+
+            <div id="coverPresetsGrid" class="presets-grid"></div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); padding-top: 16px">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #d4d4d8; cursor: pointer">
+              <input id="workFeatured" type="checkbox" style="width: 16px; height: 16px; accent-color: var(--accent)" />
+              <span>Feature in the top hero spotlight</span>
+            </label>
+
+            <div style="display: flex; align-items: center; gap: 12px">
+              <div id="modalPreviewThumb" style="width: 64px; height: 48px; border-radius: 8px; border: 1px solid var(--border); overflow: hidden"></div>
+              <div style="font-size: 12px; color: var(--muted)">
+                <div style="font-weight: 600; color: #e4e4e7">Card thumbnail</div>
+                <div id="modalPreviewHost" class="font-mono">example.com</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="cancelItemModalBtn" class="btn btn-toolbar" style="padding: 10px 16px; font-size: 14px">
+              Cancel
+            </button>
+            <button type="submit" id="saveItemBtn" class="btn btn-accent-lg">Add to ProPlay</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Settings & Publisher Modal -->
+    <div id="settingsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+      <div class="modal-panel modal-md">
+        <div class="modal-header">
+          <div>
+            <h2 id="settingsModalTitle" class="font-display" style="font-size: 24px; font-weight: 700; color: #ffffff">
+              Portal settings
+            </h2>
+            <p style="margin-top: 4px; font-size: 14px; color: var(--muted)">
+              Customize your portal header, publisher-only removal lock, and collection backups.
+            </p>
+          </div>
+          <button type="button" id="closeSettingsBtn" class="modal-close-btn" aria-label="Close settings">
+            &#10005;
+          </button>
+        </div>
+
+        <div class="form-stack">
+          <div id="settingsErrorBox" class="alert-error hidden"></div>
+          <div id="settingsSuccessBox" class="alert-success hidden"></div>
+
+          <form id="profileForm" style="display: flex; flex-direction: column; gap: 14px">
+            <h3 class="font-display" style="font-size: 16px; font-weight: 600; color: #ffffff">Portal identity</h3>
+            <div>
+              <label for="studioNameInput" class="field-label">Site title</label>
+              <input id="studioNameInput" type="text" maxlength="48" class="text-input" />
+            </div>
+            <div>
+              <label for="headlineInput" class="field-label">Hero headline</label>
+              <input id="headlineInput" type="text" maxlength="120" class="text-input" />
+            </div>
+            <div>
+              <label for="subheadlineInput" class="field-label">Subtitle</label>
+              <textarea id="subheadlineInput" rows="2" maxlength="240" class="textarea-input"></textarea>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-light" style="padding: 8px 16px; font-size: 13px">
+                Save portal text
+              </button>
+            </div>
+          </form>
+
+          <div class="settings-section">
+            <h3 class="font-display" style="font-size: 16px; font-weight: 600; color: #ffffff">
+              Publisher access lock
+            </h3>
+            <p id="passcodeStatusCopy" style="margin-top: 4px; font-size: 14px; color: var(--muted)"></p>
+            <div class="input-row" style="margin-top: 14px">
+              <input
+                id="passcodeInput"
+                type="password"
+                class="text-input"
+                placeholder="Choose publisher passcode (4+ chars)"
+              />
+              <button type="button" id="setPasscodeBtn" class="btn btn-accent" style="padding: 10px 16px; font-size: 13px">
+                Enable lock
+              </button>
+              <button type="button" id="clearPasscodeBtn" class="btn btn-toolbar hidden" style="padding: 10px 16px; font-size: 13px">
+                Remove lock
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+              <div>
+                <h3 class="font-display" style="font-size: 16px; font-weight: 600; color: #ffffff">
+                  Remove websites &amp; games
+                </h3>
+                <p id="removeSectionCopy" style="margin-top: 4px; font-size: 14px; color: var(--muted)"></p>
+              </div>
+              <div id="removeAllWebsitesMount"></div>
+            </div>
+            <div id="removeListMount"></div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="font-display" style="font-size: 16px; font-weight: 600; color: #ffffff">
+              Backup &amp; restore
+            </h3>
+            <p style="margin-top: 4px; font-size: 14px; color: var(--muted)">
+              Download a ready-to-upload Vercel folder, a standalone HTML file, or JSON backups.
+            </p>
+            <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px">
+              <a
+                href="/api/export/vercel"
+                download="proplay-vercel.zip"
+                id="settingsVercelBtn"
+                class="btn btn-accent"
+                style="padding: 8px 16px; font-size: 13px"
+              >
+                Vercel Folder (.zip)
+              </a>
+              <a
+                href="/api/export/html"
+                download="proplay.html"
+                id="settingsHtmlBtn"
+                class="btn btn-toolbar"
+                style="padding: 8px 16px; font-size: 13px"
+              >
+                Download HTML
+              </a>
+              <button type="button" id="exportJsonBtn" class="btn btn-toolbar" style="padding: 8px 16px; font-size: 13px">
+                Export JSON
+              </button>
+              <button type="button" id="importJsonBtn" class="btn btn-toolbar" style="padding: 8px 16px; font-size: 13px">
+                Import JSON
+              </button>
+              <input id="importJsonInput" type="file" accept="application/json,.json" class="hidden" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Publisher Unlock Modal -->
+    <div id="unlockModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="unlockModalTitle">
+      <div class="modal-panel modal-sm">
+        <div class="modal-header" style="border-bottom: none; padding-bottom: 0">
+          <h2 id="unlockModalTitle" class="font-display" style="font-size: 18px; font-weight: 700; color: #ffffff">
+            Publisher unlock
+          </h2>
+          <button type="button" id="closeUnlockBtn" class="modal-close-btn" style="width: 34px; height: 34px" aria-label="Close unlock prompt">
+            &#10005;
+          </button>
+        </div>
+
+        <p style="margin-top: 10px; font-size: 14px; color: var(--muted)">
+          Enter your publisher passcode to add, edit, or remove websites and games.
+        </p>
+
+        <form id="unlockForm" style="margin-top: 16px; display: flex; flex-direction: column; gap: 14px">
+          <div id="unlockErrorBox" class="alert-error hidden" style="font-size: 12px; padding: 8px 12px"></div>
+          <input id="unlockPasscodeInput" type="password" class="text-input" placeholder="Publisher passcode" />
+          <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <button type="button" id="cancelUnlockBtn" class="btn btn-toolbar" style="padding: 8px 14px">Cancel</button>
+            <button type="submit" class="btn btn-accent" style="padding: 8px 16px; font-size: 13px">Unlock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var CREATOR_TOKEN_KEY = 'proplay_creator_token';
+        var LOCAL_STATE_KEY = 'proplay_local_showcase_v1';
+
+        var STUDIO_COVERS = [
+          { label: 'Galaga Space', url: '/src/assets/images/game_galaga_arcade_1795684657356.jpg' },
+          { label: 'Centipede Grid', url: '/src/assets/images/game_centipede_arcade_1795684657858.jpg' },
+          { label: 'Orbital Arcade', url: '/src/assets/images/game_orbital_arcade_1795684234703.jpg' },
+          { label: 'Synth Studio', url: '/src/assets/images/web_synth_studio_1795684235889.jpg' },
+        ];
+
+        var DEFAULT_PROFILE = {
+          studioName: 'ProPlay',
+          headline: 'Instant-launch arcade & web builds.',
+          subheadline:
+            'Every game and website in one sleek darkroom hub. Click any tile to launch directly.',
+        };
+
+        var DEFAULT_ITEMS = [
+          {
+            id: 'item-galaga',
+            title: 'Galaga',
+            url: 'https://gamaga.vercel.app/',
+            category: 'game',
+            description:
+              'Arcade space shooter where you pilot a starfighter against waves of descending alien squadrons.',
+            coverImage: '/src/assets/images/game_galaga_arcade_1795684657356.jpg',
+            featured: true,
+            visits: 0,
+            createdAt: '2026-11-26T01:17:00.000Z',
+            updatedAt: '2026-11-26T01:17:00.000Z',
+          },
+          {
+            id: 'item-centipede',
+            title: 'Centipede',
+            url: 'https://centigame.vercel.app/',
+            category: 'game',
+            description:
+              'Fast-paced arcade shooter where you blast winding segmented centipedes across a mushroom field.',
+            coverImage: '/src/assets/images/game_centipede_arcade_1795684657858.jpg',
+            featured: false,
+            visits: 0,
+            createdAt: '2026-11-26T01:17:00.000Z',
+            updatedAt: '2026-11-26T01:17:00.000Z',
+          },
+        ];
+
+        var state = {
+          items: [],
+          profile: Object.assign({}, DEFAULT_PROFILE),
+          hasPasscode: false,
+          creatorToken: localStorage.getItem(CREATOR_TOKEN_KEY) || '',
+          isUnlocked: true,
+          useLocalFallback: false,
+          isLoading: true,
+          loadError: '',
+          activeFilter: 'all',
+          searchQuery: '',
+          sortBy: 'featured',
+          isManageMode: false,
+          confirmDeleteId: null,
+          editingItem: null,
+          formCategory: 'game',
+          formUploadedCover: '',
+          pendingAction: null,
+        };
+
+        function createEl(tag, className, text) {
+          var el = document.createElement(tag);
+          if (className) el.className = className;
+          if (text !== undefined && text !== null) el.textContent = text;
+          return el;
+        }
+
+        function safeUrl(raw) {
+          var s = String(raw || '').trim();
+          if (!s) return null;
+          if (!/^https?:\/\//i.test(s) && !s.includes('://')) {
+            s = 'https://' + s;
+          }
+          try {
+            var parsed = new URL(s);
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+            if (!parsed.hostname || parsed.hostname.indexOf('.') === -1) return null;
+            return parsed.toString();
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function safeImageUrl(raw) {
+          var s = String(raw || '').trim();
+          if (!s) return '';
+          if (s.indexOf('/src/assets/images/') === 0 && s.indexOf('..') === -1) return s;
+          if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s)) return s;
+          return safeUrl(s) || '';
+        }
+
+        function hostOf(rawUrl) {
+          try {
+            var normalized = /^https?:\/\//i.test(rawUrl) ? rawUrl : 'https://' + rawUrl;
+            return new URL(normalized).hostname.replace(/^www\./, '');
+          } catch (e) {
+            return rawUrl || 'example.com';
+          }
+        }
+
+        function svgIcon(name) {
+          var ns = 'http://www.w3.org/2000/svg';
+          var svg = document.createElementNS(ns, 'svg');
+          svg.setAttribute('width', '15');
+          svg.setAttribute('height', '15');
+          svg.setAttribute('viewBox', '0 0 24 24');
+          svg.setAttribute('fill', 'none');
+          svg.setAttribute('stroke', 'currentColor');
+          svg.setAttribute('stroke-width', '2');
+          svg.setAttribute('stroke-linecap', 'round');
+          svg.setAttribute('stroke-linejoin', 'round');
+
+          var paths = {
+            arrow: ['M7 7h10v10', 'M7 17 17 7'],
+            star: ['M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'],
+            pencil: ['M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z'],
+            trash: ['M3 6h18', 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6', 'M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'],
+            check: ['M20 6 9 17l-5-5'],
+            gamepad: ['M6 12h4', 'M8 10v4', 'M15 13h.01', 'M18 11h.01', 'M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z'],
+            globe: ['M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z', 'M2 12h20', 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z'],
+          };
+
+          (paths[name] || []).forEach(function (d) {
+            var p = document.createElementNS(ns, 'path');
+            p.setAttribute('d', d);
+            svg.appendChild(p);
+          });
+          return svg;
+        }
+
+        function buildCoverNode(src, title, category, hostname, imgClass) {
+          var safeSrc = safeImageUrl(src);
+          if (!safeSrc) {
+            return buildFallbackCover(title, category, hostname);
+          }
+          var wrapper = document.createDocumentFragment();
+          var img = document.createElement('img');
+          img.src = safeSrc;
+          img.alt = title + ' preview';
+          img.referrerPolicy = 'no-referrer';
+          img.className = imgClass;
+          img.addEventListener('error', function () {
+            if (img.parentNode) {
+              img.parentNode.replaceChild(buildFallbackCover(title, category, hostname), img);
+            }
+          });
+          wrapper.appendChild(img);
+          return wrapper;
+        }
+
+        function buildFallbackCover(title, category, hostname) {
+          var box = createEl('div', 'cover-fallback');
+          var iconWrap = createEl('div', 'cover-fallback-icon');
+          iconWrap.appendChild(svgIcon(category === 'game' ? 'gamepad' : 'globe'));
+          box.appendChild(iconWrap);
+          box.appendChild(createEl('span', 'cover-fallback-title', title));
+          box.appendChild(createEl('span', 'cover-fallback-host', hostname));
+          return box;
+        }
+
+        function authHeaders() {
+          var headers = { 'Content-Type': 'application/json' };
+          if (state.creatorToken) headers['x-creator-token'] = state.creatorToken;
+          return headers;
+        }
+
+        function saveLocalFallback() {
+          try {
+            localStorage.setItem(
+              LOCAL_STATE_KEY,
+              JSON.stringify({ profile: state.profile, items: state.items })
+            );
+          } catch (e) {}
+        }
+
+        function loadLocalFallback() {
+          try {
+            var raw = localStorage.getItem(LOCAL_STATE_KEY);
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed && Array.isArray(parsed.items)) {
+                state.items = parsed.items;
+                if (parsed.profile) state.profile = parsed.profile;
+                return;
+              }
+            }
+          } catch (e) {}
+          state.items = DEFAULT_ITEMS.slice();
+          state.profile = Object.assign({}, DEFAULT_PROFILE);
+          saveLocalFallback();
+        }
+
+        async function loadShowcase() {
+          state.isLoading = true;
+          state.loadError = '';
+          render();
+          try {
+            var res = await fetch('/api/items');
+            var contentType = res.headers.get('content-type') || '';
+            if (!res.ok || contentType.indexOf('application/json') === -1) {
+              throw new Error('Server API unavailable');
+            }
+            var data = await res.json();
+            state.useLocalFallback = false;
+            state.items = Array.isArray(data.items) ? data.items : [];
+            if (data.profile) state.profile = data.profile;
+            state.hasPasscode = Boolean(data.hasPasscode);
+
+            if (state.hasPasscode) {
+              var stored = localStorage.getItem(CREATOR_TOKEN_KEY) || '';
+              var verifyRes = await fetch('/api/auth/verify', {
+                method: 'POST',
+                headers: stored ? { 'x-creator-token': stored } : {},
+              });
+              if (verifyRes.ok) {
+                var verifyData = await verifyRes.json();
+                state.isUnlocked = Boolean(verifyData.unlocked);
+                if (!state.isUnlocked) {
+                  localStorage.removeItem(CREATOR_TOKEN_KEY);
+                  state.creatorToken = '';
+                }
+              }
+            } else {
+              state.isUnlocked = true;
+            }
+          } catch (err) {
+            if (window.location.protocol === 'file:') {
+              state.useLocalFallback = true;
+              loadLocalFallback();
+            } else {
+              state.useLocalFallback = true;
+              loadLocalFallback();
+            }
+          } finally {
+            state.isLoading = false;
+            render();
+          }
+        }
+
+        function requireCreatorAccess(action) {
+          if (!state.hasPasscode || state.isUnlocked) {
+            action();
+            return;
+          }
+          state.pendingAction = action;
+          openUnlockModal();
+        }
+
+        function recordVisit(id) {
+          state.items = state.items.map(function (item) {
+            return item.id === id ? Object.assign({}, item, { visits: (item.visits || 0) + 1 }) : item;
+          });
+          render();
+          if (state.useLocalFallback) {
+            saveLocalFallback();
+            return;
+          }
+          fetch('/api/items/' + encodeURIComponent(id) + '/visit', {
+            method: 'POST',
+            keepalive: true,
+          }).catch(function () {});
+        }
+
+        function getFilteredItems() {
+          var q = state.searchQuery.trim().toLowerCase();
+          var list = state.items.filter(function (item) {
+            if (state.activeFilter !== 'all' && item.category !== state.activeFilter) return false;
+            if (!q) return true;
+            return (
+              item.title.toLowerCase().indexOf(q) !== -1 ||
+              (item.description || '').toLowerCase().indexOf(q) !== -1 ||
+              item.url.toLowerCase().indexOf(q) !== -1
+            );
+          });
+
+          return list.slice().sort(function (a, b) {
+            if (state.sortBy === 'featured') {
+              if (Boolean(a.featured) !== Boolean(b.featured)) return a.featured ? -1 : 1;
+              return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+            }
+            if (state.sortBy === 'newest') {
+              return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+            }
+            if (state.sortBy === 'visits') {
+              return (b.visits || 0) - (a.visits || 0);
+            }
+            return a.title.localeCompare(b.title);
+          });
+        }
+
+        function render() {
+          document.getElementById('brandWordmark').textContent = state.profile.studioName;
+          document.getElementById('footerBrand').textContent = state.profile.studioName;
+          document.getElementById('heroHeadline').textContent = state.profile.headline;
+          document.getElementById('heroSubheadline').textContent = state.profile.subheadline;
+          document.title = state.profile.studioName + ' — Games & Websites Hub';
+
+          var gamesCount = state.items.filter(function (i) { return i.category === 'game'; }).length;
+          var websitesCount = state.items.filter(function (i) { return i.category === 'website'; }).length;
+          var totalLaunches = state.items.reduce(function (sum, i) { return sum + (i.visits || 0); }, 0);
+
+          document.getElementById('statTotal').textContent = String(state.items.length);
+          document.getElementById('statGames').textContent = String(gamesCount);
+          document.getElementById('statWebsites').textContent = String(websitesCount);
+          document.getElementById('statLaunches').textContent = String(totalLaunches);
+          document.getElementById('footerCount').textContent = state.items.length + ' curated links';
+
+          // Nav & filter tabs active state
+          document.querySelectorAll('[data-nav]').forEach(function (btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-nav') === state.activeFilter);
+          });
+          document.querySelectorAll('[data-filter]').forEach(function (btn) {
+            var active = btn.getAttribute('data-filter') === state.activeFilter;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+
+          // Manage & Settings buttons visibility (publisher-only when passcode active)
+          var canManage = !state.hasPasscode || state.isUnlocked;
+          var manageBtn = document.getElementById('manageBtn');
+          var settingsBtn = document.getElementById('toolbarSettingsBtn');
+          manageBtn.classList.toggle('hidden', !canManage);
+          manageBtn.classList.toggle('active', state.isManageMode);
+          manageBtn.textContent = state.isManageMode ? 'Done managing' : 'Manage';
+          settingsBtn.classList.toggle('hidden', !(canManage && state.isManageMode));
+
+          // Error banner
+          var errorBanner = document.getElementById('loadErrorBanner');
+          errorBanner.classList.toggle('hidden', !state.loadError);
+          document.getElementById('loadErrorText').textContent = state.loadError;
+
+          // Spotlight render
+          var spotlightMount = document.getElementById('spotlightMount');
+          spotlightMount.innerHTML = '';
+          var spotlight =
+            state.items.find(function (item) { return item.featured; }) || state.items[0] || null;
+
+          if (spotlight && safeUrl(spotlight.url)) {
+            var sCard = createEl('a', 'spotlight-card');
+            sCard.href = safeUrl(spotlight.url);
+            sCard.target = '_blank';
+            sCard.rel = 'noopener noreferrer';
+            sCard.addEventListener('click', function () {
+              recordVisit(spotlight.id);
+            });
+
+            sCard.appendChild(
+              buildCoverNode(
+                spotlight.coverImage,
+                spotlight.title,
+                spotlight.category,
+                hostOf(spotlight.url),
+                'spotlight-media'
+              )
+            );
+            sCard.appendChild(createEl('div', 'spotlight-scrim'));
+
+            var overlay = createEl('div', 'spotlight-overlay');
+            var meta = createEl('div', 'spotlight-meta');
+            meta.appendChild(createEl('span', 'spotlight-meta-accent', 'Featured'));
+            meta.appendChild(createEl('span', '', '·'));
+            meta.appendChild(createEl('span', '', spotlight.category === 'game' ? 'Game' : 'Website'));
+            meta.appendChild(createEl('span', '', '·'));
+            meta.appendChild(createEl('span', 'font-mono', hostOf(spotlight.url)));
+            overlay.appendChild(meta);
+
+            var bottom = createEl('div', 'spotlight-bottom');
+            var left = createEl('div');
+            left.style.minWidth = '0';
+            left.appendChild(createEl('h2', 'spotlight-title', spotlight.title));
+            if (spotlight.description) {
+              left.appendChild(createEl('p', 'spotlight-desc', spotlight.description));
+            }
+            bottom.appendChild(left);
+
+            var cta = createEl('span', 'btn btn-accent');
+            cta.style.padding = '10px 16px';
+            cta.textContent = spotlight.category === 'game' ? 'Play now' : 'Visit site';
+            cta.appendChild(svgIcon('arrow'));
+            bottom.appendChild(cta);
+
+            overlay.appendChild(bottom);
+            sCard.appendChild(overlay);
+            spotlightMount.appendChild(sCard);
+          } else {
+            var emptySpot = createEl('div', 'spotlight-empty');
+            emptySpot.appendChild(
+              createEl('p', 'font-display', 'Your spotlight slot is ready')
+            );
+            var emptySub = createEl(
+              'p',
+              '',
+              'Add your first game or website to display it here for visitors to launch in one click.'
+            );
+            emptySub.style.marginTop = '8px';
+            emptySub.style.fontSize = '14px';
+            emptySub.style.color = 'var(--muted)';
+            emptySub.style.maxWidth = '340px';
+            emptySpot.appendChild(emptySub);
+
+            var emptyAddBtn = createEl('button', 'btn btn-accent-lg', '+ Add first work');
+            emptyAddBtn.type = 'button';
+            emptyAddBtn.style.marginTop = '20px';
+            emptyAddBtn.addEventListener('click', function () {
+              requireCreatorAccess(function () {
+                openItemModal(null);
+              });
+            });
+            emptySpot.appendChild(emptyAddBtn);
+            spotlightMount.appendChild(emptySpot);
+          }
+
+          // Catalog Grid render
+          var catalogMount = document.getElementById('catalogMount');
+          catalogMount.innerHTML = '';
+
+          if (state.isLoading) {
+            var loadingGrid = createEl('div', 'cards-grid');
+            for (var s = 0; s < 2; s++) {
+              var sk = createEl('div', 'card');
+              var skThumb = createEl('div', 'card-thumb');
+              skThumb.style.background = '#1d1d24';
+              sk.appendChild(skThumb);
+              var skBody = createEl('div', 'card-body');
+              skBody.appendChild(createEl('div', '', 'Loading...'));
+              sk.appendChild(skBody);
+              loadingGrid.appendChild(sk);
+            }
+            catalogMount.appendChild(loadingGrid);
+            return;
+          }
+
+          var filtered = getFilteredItems();
+          if (filtered.length === 0) {
+            var emptyBox = createEl('div', 'empty-box');
+            emptyBox.appendChild(
+              createEl(
+                'h3',
+                'font-display',
+                state.items.length === 0
+                  ? 'No games or websites added yet'
+                  : 'No matching works found'
+              )
+            );
+            var msg = createEl(
+              'p',
+              '',
+              state.items.length === 0
+                ? 'Add your first game or website link to build your personal direct-launch catalog.'
+                : 'Try clearing your search query or switching back to all categories.'
+            );
+            msg.style.marginTop = '8px';
+            msg.style.fontSize = '14px';
+            msg.style.color = 'var(--muted)';
+            emptyBox.appendChild(msg);
+
+            var actionWrap = createEl('div', '');
+            actionWrap.style.marginTop = '24px';
+            if (state.items.length > 0) {
+              var resetBtn = createEl('button', 'btn btn-dark', 'Reset filters');
+              resetBtn.type = 'button';
+              resetBtn.addEventListener('click', function () {
+                state.activeFilter = 'all';
+                state.searchQuery = '';
+                document.getElementById('searchInput').value = '';
+                render();
+              });
+              actionWrap.appendChild(resetBtn);
+            } else {
+              var firstBtn = createEl('button', 'btn btn-accent-lg', '+ Add your first work');
+              firstBtn.type = 'button';
+              firstBtn.addEventListener('click', function () {
+                requireCreatorAccess(function () {
+                  openItemModal(null);
+                });
+              });
+              actionWrap.appendChild(firstBtn);
+            }
+            emptyBox.appendChild(actionWrap);
+            catalogMount.appendChild(emptyBox);
+            return;
+          }
+
+          var grid = createEl('div', 'cards-grid');
+          filtered.forEach(function (item) {
+            var itemHref = safeUrl(item.url);
+            if (!itemHref) return;
+            var host = hostOf(itemHref);
+            var card = createEl('article', 'card');
+
+            if (state.isManageMode && canManage) {
+              var manageBar = createEl('div', 'card-manage-bar');
+
+              var starBtn = createEl(
+                'button',
+                'icon-action-btn' + (item.featured ? ' starred' : '')
+              );
+              starBtn.type = 'button';
+              starBtn.title = item.featured ? 'Featured in spotlight' : 'Set as hero spotlight';
+              starBtn.setAttribute('aria-label', starBtn.title);
+              var starSvg = svgIcon('star');
+              if (item.featured) starSvg.setAttribute('fill', 'currentColor');
+              starBtn.appendChild(starSvg);
+              starBtn.addEventListener('click', function () {
+                toggleFeaturedItem(item);
+              });
+              manageBar.appendChild(starBtn);
+
+              var editBtn = createEl('button', 'icon-action-btn');
+              editBtn.type = 'button';
+              editBtn.title = 'Edit ' + item.title;
+              editBtn.setAttribute('aria-label', 'Edit ' + item.title);
+              editBtn.appendChild(svgIcon('pencil'));
+              editBtn.addEventListener('click', function () {
+                openItemModal(item);
+              });
+              manageBar.appendChild(editBtn);
+
+              if (state.confirmDeleteId === item.id) {
+                var confirmBtn = createEl('button', 'btn btn-danger');
+                confirmBtn.type = 'button';
+                confirmBtn.appendChild(svgIcon('check'));
+                confirmBtn.appendChild(document.createTextNode('Delete'));
+                confirmBtn.addEventListener('click', function () {
+                  deleteItem(item.id);
+                });
+                manageBar.appendChild(confirmBtn);
+              } else {
+                var delBtn = createEl('button', 'icon-action-btn delete');
+                delBtn.type = 'button';
+                delBtn.title = 'Delete ' + item.title;
+                delBtn.setAttribute('aria-label', 'Delete ' + item.title);
+                delBtn.appendChild(svgIcon('trash'));
+                delBtn.addEventListener('click', function () {
+                  state.confirmDeleteId = item.id;
+                  render();
+                });
+                manageBar.appendChild(delBtn);
+              }
+
+              card.appendChild(manageBar);
+            }
+
+            var link = createEl('a', 'card-link');
+            link.href = itemHref;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.addEventListener('click', function () {
+              recordVisit(item.id);
+            });
+
+            var thumb = createEl('div', 'card-thumb');
+            thumb.appendChild(
+              buildCoverNode(item.coverImage, item.title, item.category, host, '')
+            );
+            link.appendChild(thumb);
+
+            var body = createEl('div', 'card-body');
+            var top = createEl('div');
+            var metaRow = createEl('div', 'card-meta');
+            metaRow.appendChild(
+              createEl('span', 'card-meta-type', item.category === 'game' ? 'Game' : 'Website')
+            );
+            metaRow.appendChild(createEl('span', '', '·'));
+            metaRow.appendChild(createEl('span', 'font-mono card-meta-host', host));
+            metaRow.appendChild(createEl('span', '', '·'));
+            var launches = item.visits || 0;
+            metaRow.appendChild(
+              createEl(
+                'span',
+                'tabular-nums',
+                launches + (launches === 1 ? ' launch' : ' launches')
+              )
+            );
+            top.appendChild(metaRow);
+
+            top.appendChild(createEl('h3', 'card-title', item.title));
+            if (item.description) {
+              top.appendChild(createEl('p', 'card-desc', item.description));
+            }
+            body.appendChild(top);
+
+            var foot = createEl('div', 'card-footer');
+            foot.appendChild(
+              createEl('span', '', item.category === 'game' ? 'Play game' : 'Visit website')
+            );
+            foot.appendChild(svgIcon('arrow'));
+            body.appendChild(foot);
+
+            link.appendChild(body);
+            card.appendChild(link);
+            grid.appendChild(card);
+          });
+          catalogMount.appendChild(grid);
+        }
+
+        // Item Modal Logic
+        function renderCoverPresets() {
+          var presetsGrid = document.getElementById('coverPresetsGrid');
+          presetsGrid.innerHTML = '';
+          var currentCover = state.formUploadedCover || document.getElementById('workCover').value.trim();
+
+          STUDIO_COVERS.forEach(function (preset) {
+            var btn = createEl(
+              'button',
+              'preset-btn' + (currentCover === preset.url ? ' selected' : '')
+            );
+            btn.type = 'button';
+            btn.title = 'Use ' + preset.label + ' cover';
+            var img = document.createElement('img');
+            img.src = preset.url;
+            img.alt = preset.label;
+            btn.appendChild(img);
+            btn.addEventListener('click', function () {
+              state.formUploadedCover = '';
+              document.getElementById('workCover').value = preset.url;
+              renderCoverPresets();
+              renderModalPreview();
+            });
+            presetsGrid.appendChild(btn);
+          });
+        }
+
+        function renderModalPreview() {
+          var urlVal = document.getElementById('workUrl').value;
+          var titleVal = document.getElementById('workTitle').value.trim() || 'Preview';
+          var coverVal = state.formUploadedCover || document.getElementById('workCover').value.trim();
+          var host = hostOf(urlVal);
+          document.getElementById('modalPreviewHost').textContent = host;
+
+          var previewBox = document.getElementById('modalPreviewThumb');
+          previewBox.innerHTML = '';
+          var node = buildCoverNode(coverVal, titleVal, state.formCategory, host, '');
+          previewBox.appendChild(node);
+          var img = previewBox.querySelector('img');
+          if (img) {
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+          }
+        }
+
+        function setFormCategory(cat) {
+          state.formCategory = cat === 'website' ? 'website' : 'game';
+          document.querySelectorAll('[data-item-type]').forEach(function (btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-item-type') === state.formCategory);
+          });
+          renderModalPreview();
+        }
+
+        function openItemModal(item) {
+          state.editingItem = item || null;
+          state.formUploadedCover = '';
+          document.getElementById('itemModalTitle').textContent = item
+            ? 'Edit game or website'
+            : 'Add a game or website';
+          document.getElementById('saveItemBtn').textContent = item
+            ? 'Save changes'
+            : 'Add to ProPlay';
+          document.getElementById('workUrl').value = item ? item.url : '';
+          document.getElementById('workTitle').value = item ? item.title : '';
+          document.getElementById('workDesc').value = item ? item.description || '' : '';
+          var cover = item ? item.coverImage || '' : '';
+          if (cover.indexOf('data:') === 0) {
+            state.formUploadedCover = cover;
+            document.getElementById('workCover').value = '';
+            document.getElementById('workCover').placeholder =
+              'Uploaded image ready (paste a URL here to replace)';
+          } else {
+            document.getElementById('workCover').value = cover;
+            document.getElementById('workCover').placeholder =
+              'Paste an image URL or choose a preset cover below';
+          }
+          document.getElementById('workFeatured').checked = Boolean(item && item.featured);
+          document.getElementById('itemErrorBox').classList.add('hidden');
+          setFormCategory(item ? item.category : 'game');
+          renderCoverPresets();
+          renderModalPreview();
+          document.getElementById('itemModal').classList.add('open');
+        }
+
+        function closeItemModal() {
+          document.getElementById('itemModal').classList.remove('open');
+          state.editingItem = null;
+        }
+
+        async function saveItemForm(e) {
+          e.preventDefault();
+          var errBox = document.getElementById('itemErrorBox');
+          errBox.classList.add('hidden');
+
+          var rawUrl = document.getElementById('workUrl').value.trim();
+          var title = document.getElementById('workTitle').value.trim().slice(0, 80);
+          var desc = document.getElementById('workDesc').value.trim().slice(0, 240);
+          var cover = state.formUploadedCover || document.getElementById('workCover').value.trim();
+          var featured = document.getElementById('workFeatured').checked;
+
+          var normalized = safeUrl(rawUrl);
+          if (!normalized) {
+            errBox.textContent = 'Please enter a valid website URL (e.g. https://mygame.vercel.app).';
+            errBox.classList.remove('hidden');
+            return;
+          }
+          if (!title) {
+            errBox.textContent = 'Please enter a title for your game or website.';
+            errBox.classList.remove('hidden');
+            return;
+          }
+
+          var btn = document.getElementById('saveItemBtn');
+          btn.disabled = true;
+          try {
+            if (state.useLocalFallback) {
+              var now = new Date().toISOString();
+              if (featured) {
+                state.items = state.items.map(function (i) {
+                  return Object.assign({}, i, { featured: false });
+                });
+              }
+              if (state.editingItem) {
+                state.items = state.items.map(function (i) {
+                  return i.id === state.editingItem.id
+                    ? Object.assign({}, i, {
+                        title: title,
+                        url: normalized,
+                        category: state.formCategory,
+                        description: desc,
+                        coverImage: cover,
+                        featured: featured,
+                        updatedAt: now,
+                      })
+                    : i;
+                });
+              } else {
+                state.items.unshift({
+                  id: 'item-' + Math.random().toString(36).slice(2, 10),
+                  title: title,
+                  url: normalized,
+                  category: state.formCategory,
+                  description: desc,
+                  coverImage: cover,
+                  featured: featured,
+                  visits: 0,
+                  createdAt: now,
+                  updatedAt: now,
+                });
+              }
+              saveLocalFallback();
+              closeItemModal();
+              render();
+              return;
+            }
+
+            var isEdit = Boolean(state.editingItem);
+            var endpoint = isEdit ? '/api/items/' + encodeURIComponent(state.editingItem.id) : '/api/items';
+            var res = await fetch(endpoint, {
+              method: isEdit ? 'PATCH' : 'POST',
+              headers: authHeaders(),
+              body: JSON.stringify({
+                title: title,
+                url: normalized,
+                category: state.formCategory,
+                description: desc,
+                coverImage: cover,
+                featured: featured,
+              }),
+            });
+            var data = await res.json();
+            if (res.status === 401) {
+              state.isUnlocked = false;
+              throw new Error('Session locked. Please unlock with your publisher passcode.');
+            }
+            if (!res.ok) throw new Error(data.error || 'Failed to save work.');
+            if (Array.isArray(data.items)) state.items = data.items;
+            closeItemModal();
+            render();
+          } catch (err) {
+            errBox.textContent = err.message || 'Unable to save item.';
+            errBox.classList.remove('hidden');
+          } finally {
+            btn.disabled = false;
+          }
+        }
+
+        async function toggleFeaturedItem(item) {
+          if (state.useLocalFallback) {
+            var nextFeatured = !item.featured;
+            state.items = state.items.map(function (i) {
+              if (i.id === item.id) return Object.assign({}, i, { featured: nextFeatured });
+              return nextFeatured ? Object.assign({}, i, { featured: false }) : i;
+            });
+            saveLocalFallback();
+            render();
+            return;
+          }
+          var res = await fetch('/api/items/' + encodeURIComponent(item.id), {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ featured: !item.featured }),
+          });
+          if (res.status === 401) {
+            state.isUnlocked = false;
+            openUnlockModal();
+            return;
+          }
+          if (res.ok) {
+            var data = await res.json();
+            if (Array.isArray(data.items)) state.items = data.items;
+            render();
+          }
+        }
+
+        async function deleteItem(id) {
+          if (state.useLocalFallback) {
+            state.items = state.items.filter(function (i) { return i.id !== id; });
+            state.confirmDeleteId = null;
+            saveLocalFallback();
+            render();
+            renderSettingsRemoveList();
+            return;
+          }
+          var res = await fetch('/api/items/' + encodeURIComponent(id), {
+            method: 'DELETE',
+            headers: authHeaders(),
+          });
+          if (res.status === 401) {
+            state.isUnlocked = false;
+            openUnlockModal();
+            return;
+          }
+          if (!res.ok) {
+            var errData = await res.json().catch(function () { return {}; });
+            throw new Error(errData.error || 'Unable to remove item.');
+          }
+          var data = await res.json();
+          if (Array.isArray(data.items)) state.items = data.items;
+          state.confirmDeleteId = null;
+          render();
+          renderSettingsRemoveList();
+        }
+
+        // Settings Modal Logic
+        var settingsConfirmRemoveId = null;
+        var settingsConfirmClearWebsites = false;
+
+        function showSettingsAlert(type, message) {
+          var err = document.getElementById('settingsErrorBox');
+          var ok = document.getElementById('settingsSuccessBox');
+          err.classList.add('hidden');
+          ok.classList.add('hidden');
+          if (!message) return;
+          if (type === 'error') {
+            err.textContent = message;
+            err.classList.remove('hidden');
+          } else {
+            ok.textContent = message;
+            ok.classList.remove('hidden');
+          }
+        }
+
+        function renderSettingsRemoveList() {
+          document.getElementById('passcodeStatusCopy').textContent = state.hasPasscode
+            ? 'Publisher lock is active. Only people with the publisher passcode can add, edit, or remove websites and games.'
+            : 'Set a publisher passcode so only people who published this website can remove or edit your links.';
+          document.getElementById('passcodeInput').placeholder = state.hasPasscode
+            ? 'Enter new publisher passcode (4+ chars)'
+            : 'Choose publisher passcode (4+ chars)';
+          document.getElementById('setPasscodeBtn').textContent = state.hasPasscode
+            ? 'Update lock'
+            : 'Enable lock';
+          document.getElementById('clearPasscodeBtn').classList.toggle('hidden', !state.hasPasscode);
+
+          document.getElementById('removeSectionCopy').textContent = state.hasPasscode
+            ? 'Publisher-only controls to remove published websites or games.'
+            : 'Set a publisher passcode above to keep these removal controls exclusive to the publisher.';
+
+          var clearMount = document.getElementById('removeAllWebsitesMount');
+          clearMount.innerHTML = '';
+          var hasWebsites = state.items.some(function (i) { return i.category === 'website'; });
+          if (hasWebsites) {
+            if (settingsConfirmClearWebsites) {
+              var wrap = createEl('div');
+              wrap.style.display = 'flex';
+              wrap.style.gap = '8px';
+              var confirmClearBtn = createEl('button', 'btn btn-danger', 'Confirm remove websites');
+              confirmClearBtn.type = 'button';
+              confirmClearBtn.addEventListener('click', async function () {
+                try {
+                  if (state.useLocalFallback) {
+                    state.items = state.items.filter(function (i) { return i.category !== 'website'; });
+                    saveLocalFallback();
+                  } else {
+                    var res = await fetch('/api/items/remove-websites', {
+                      method: 'POST',
+                      headers: authHeaders(),
+                    });
+                    var data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Unable to remove websites.');
+                    if (Array.isArray(data.items)) state.items = data.items;
+                  }
+                  settingsConfirmClearWebsites = false;
+                  showSettingsAlert('success', 'All websites removed.');
+                  render();
+                  renderSettingsRemoveList();
+                } catch (err) {
+                  showSettingsAlert('error', err.message);
+                }
+              });
+              var cancelClearBtn = createEl('button', 'btn btn-toolbar', 'Cancel');
+              cancelClearBtn.type = 'button';
+              cancelClearBtn.addEventListener('click', function () {
+                settingsConfirmClearWebsites = false;
+                renderSettingsRemoveList();
+              });
+              wrap.appendChild(confirmClearBtn);
+              wrap.appendChild(cancelClearBtn);
+              clearMount.appendChild(wrap);
+            } else {
+              var clearBtn = createEl('button', 'btn btn-danger-outline', 'Remove all websites');
+              clearBtn.type = 'button';
+              clearBtn.addEventListener('click', function () {
+                settingsConfirmClearWebsites = true;
+                renderSettingsRemoveList();
+              });
+              clearMount.appendChild(clearBtn);
+            }
+          }
+
+          var listMount = document.getElementById('removeListMount');
+          listMount.innerHTML = '';
+          if (state.items.length === 0) {
+            var none = createEl('p', '', 'No games or websites currently published.');
+            none.style.marginTop = '12px';
+            none.style.fontSize = '12px';
+            none.style.color = 'var(--muted-dim)';
+            listMount.appendChild(none);
+            return;
+          }
+
+          var listBox = createEl('div', 'remove-list');
+          state.items.forEach(function (item) {
+            var row = createEl('div', 'remove-row');
+            var info = createEl('div');
+            info.style.minWidth = '0';
+
+            var titleLine = createEl('div');
+            titleLine.style.display = 'flex';
+            titleLine.style.alignItems = 'center';
+            titleLine.style.gap = '8px';
+            titleLine.style.fontSize = '14px';
+            titleLine.style.fontWeight = '500';
+            titleLine.style.color = '#ffffff';
+            var titleSpan = createEl('span', '', item.title);
+            titleSpan.style.overflow = 'hidden';
+            titleSpan.style.textOverflow = 'ellipsis';
+            titleSpan.style.whiteSpace = 'nowrap';
+            titleLine.appendChild(titleSpan);
+            var typeSpan = createEl('span', '', item.category === 'game' ? 'Game' : 'Website');
+            typeSpan.style.fontSize = '12px';
+            typeSpan.style.color = 'var(--muted-dim)';
+            titleLine.appendChild(typeSpan);
+            info.appendChild(titleLine);
+
+            var urlLine = createEl('div', 'font-mono', item.url);
+            urlLine.style.fontSize = '12px';
+            urlLine.style.color = 'var(--muted)';
+            urlLine.style.overflow = 'hidden';
+            urlLine.style.textOverflow = 'ellipsis';
+            urlLine.style.whiteSpace = 'nowrap';
+            info.appendChild(urlLine);
+            row.appendChild(info);
+
+            if (settingsConfirmRemoveId === item.id) {
+              var btns = createEl('div');
+              btns.style.display = 'flex';
+              btns.style.gap = '6px';
+              btns.style.flexShrink = '0';
+              var okBtn = createEl('button', 'btn btn-danger', 'Remove');
+              okBtn.type = 'button';
+              okBtn.addEventListener('click', async function () {
+                try {
+                  await deleteItem(item.id);
+                  settingsConfirmRemoveId = null;
+                  showSettingsAlert('success', 'Removed "' + item.title + '".');
+                } catch (err) {
+                  showSettingsAlert('error', err.message);
+                }
+              });
+              var noBtn = createEl('button', 'btn btn-toolbar', 'Cancel');
+              noBtn.type = 'button';
+              noBtn.addEventListener('click', function () {
+                settingsConfirmRemoveId = null;
+                renderSettingsRemoveList();
+              });
+              btns.appendChild(okBtn);
+              btns.appendChild(noBtn);
+              row.appendChild(btns);
+            } else {
+              var rmBtn = createEl('button', 'btn btn-toolbar', 'Remove');
+              rmBtn.type = 'button';
+              rmBtn.addEventListener('click', function () {
+                settingsConfirmRemoveId = item.id;
+                renderSettingsRemoveList();
+              });
+              row.appendChild(rmBtn);
+            }
+
+            listBox.appendChild(row);
+          });
+          listMount.appendChild(listBox);
+        }
+
+        function openSettingsModal() {
+          settingsConfirmRemoveId = null;
+          settingsConfirmClearWebsites = false;
+          document.getElementById('studioNameInput').value = state.profile.studioName;
+          document.getElementById('headlineInput').value = state.profile.headline;
+          document.getElementById('subheadlineInput').value = state.profile.subheadline;
+          document.getElementById('passcodeInput').value = '';
+          showSettingsAlert('', '');
+          renderSettingsRemoveList();
+          document.getElementById('settingsModal').classList.add('open');
+        }
+
+        function closeSettingsModal() {
+          document.getElementById('settingsModal').classList.remove('open');
+        }
+
+        // Unlock Modal Logic
+        function openUnlockModal() {
+          document.getElementById('unlockPasscodeInput').value = '';
+          document.getElementById('unlockErrorBox').classList.add('hidden');
+          document.getElementById('unlockModal').classList.add('open');
+          setTimeout(function () {
+            document.getElementById('unlockPasscodeInput').focus();
+          }, 20);
+        }
+
+        function closeUnlockModal() {
+          document.getElementById('unlockModal').classList.remove('open');
+          state.pendingAction = null;
+        }
+
+        // Event Bindings
+        document.getElementById('headerAddBtn').addEventListener('click', function () {
+          requireCreatorAccess(function () { openItemModal(null); });
+        });
+        document.getElementById('heroAddBtn').addEventListener('click', function () {
+          requireCreatorAccess(function () { openItemModal(null); });
+        });
+        document.getElementById('footerAddBtn').addEventListener('click', function () {
+          requireCreatorAccess(function () { openItemModal(null); });
+        });
+        document.getElementById('footerSettingsBtn').addEventListener('click', function () {
+          requireCreatorAccess(openSettingsModal);
+        });
+        document.getElementById('toolbarSettingsBtn').addEventListener('click', function () {
+          requireCreatorAccess(openSettingsModal);
+        });
+        document.getElementById('manageBtn').addEventListener('click', function () {
+          requireCreatorAccess(function () {
+            state.confirmDeleteId = null;
+            state.isManageMode = !state.isManageMode;
+            render();
+          });
+        });
+        document.getElementById('retryLoadBtn').addEventListener('click', loadShowcase);
+
+        document.querySelectorAll('[data-nav]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state.activeFilter = btn.getAttribute('data-nav');
+            render();
+            var catalogEl = document.getElementById('catalog');
+            if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
+          });
+        });
+
+        document.querySelectorAll('[data-filter]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state.activeFilter = btn.getAttribute('data-filter');
+            render();
+          });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+          state.searchQuery = e.target.value;
+          render();
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', function (e) {
+          state.sortBy = e.target.value;
+          render();
+        });
+
+        // Item Modal Events
+        document.getElementById('closeItemModalBtn').addEventListener('click', closeItemModal);
+        document.getElementById('cancelItemModalBtn').addEventListener('click', closeItemModal);
+        document.getElementById('itemModal').addEventListener('click', function (e) {
+          if (e.target === this) closeItemModal();
+        });
+        document.querySelectorAll('[data-item-type]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            setFormCategory(btn.getAttribute('data-item-type'));
+          });
+        });
+        document.getElementById('workUrl').addEventListener('input', renderModalPreview);
+        document.getElementById('workTitle').addEventListener('input', renderModalPreview);
+        document.getElementById('workCover').addEventListener('input', function () {
+          state.formUploadedCover = '';
+          renderCoverPresets();
+          renderModalPreview();
+        });
+        document.getElementById('uploadCoverBtn').addEventListener('click', function () {
+          document.getElementById('coverFileInput').click();
+        });
+        document.getElementById('coverFileInput').addEventListener('change', function (e) {
+          var file = e.target.files && e.target.files[0];
+          if (!file) return;
+          var errBox = document.getElementById('itemErrorBox');
+          if (file.type.indexOf('image/') !== 0) {
+            errBox.textContent = 'Please choose a PNG, JPG, GIF, or WebP image.';
+            errBox.classList.remove('hidden');
+            return;
+          }
+          if (file.size > 1800000) {
+            errBox.textContent = 'Please upload an image smaller than 1.8 MB.';
+            errBox.classList.remove('hidden');
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function () {
+            if (typeof reader.result === 'string') {
+              state.formUploadedCover = reader.result;
+              document.getElementById('workCover').value = '';
+              document.getElementById('workCover').placeholder =
+                'Uploaded image ready (paste a URL here to replace)';
+              errBox.classList.add('hidden');
+              renderCoverPresets();
+              renderModalPreview();
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+        document.getElementById('autoFillBtn').addEventListener('click', async function () {
+          var rawUrl = document.getElementById('workUrl').value.trim();
+          var errBox = document.getElementById('itemErrorBox');
+          if (!rawUrl) {
+            errBox.textContent = 'Paste your game or website URL first to auto-fill details.';
+            errBox.classList.remove('hidden');
+            return;
+          }
+          errBox.classList.add('hidden');
+          var btn = document.getElementById('autoFillBtn');
+          btn.disabled = true;
+          btn.textContent = 'Loading...';
+          try {
+            var res = await fetch('/api/metadata', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: rawUrl }),
+            });
+            var data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Could not read metadata.');
+            if (data.normalizedUrl) document.getElementById('workUrl').value = data.normalizedUrl;
+            if (data.title && !document.getElementById('workTitle').value.trim()) {
+              document.getElementById('workTitle').value = data.title;
+            }
+            if (data.description && !document.getElementById('workDesc').value.trim()) {
+              document.getElementById('workDesc').value = data.description;
+            }
+            if (data.coverImage && !document.getElementById('workCover').value.trim() && !state.formUploadedCover) {
+              document.getElementById('workCover').value = data.coverImage;
+            }
+            renderModalPreview();
+          } catch (err) {
+            errBox.textContent = 'Unable to fetch site info right now. You can enter details manually.';
+            errBox.classList.remove('hidden');
+          } finally {
+            btn.disabled = false;
+            btn.textContent = 'Auto-fill';
+          }
+        });
+        document.getElementById('itemForm').addEventListener('submit', saveItemForm);
+
+        // Settings Modal Events
+        document.getElementById('closeSettingsBtn').addEventListener('click', closeSettingsModal);
+        document.getElementById('settingsModal').addEventListener('click', function (e) {
+          if (e.target === this) closeSettingsModal();
+        });
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var nextProfile = {
+            studioName: document.getElementById('studioNameInput').value.trim(),
+            headline: document.getElementById('headlineInput').value.trim(),
+            subheadline: document.getElementById('subheadlineInput').value.trim(),
+          };
+          if (!nextProfile.studioName || !nextProfile.headline) {
+            showSettingsAlert('error', 'Showcase name and headline are required.');
+            return;
+          }
+          try {
+            if (state.useLocalFallback) {
+              state.profile = nextProfile;
+              saveLocalFallback();
+            } else {
+              var res = await fetch('/api/profile', {
+                method: 'PATCH',
+                headers: authHeaders(),
+                body: JSON.stringify(nextProfile),
+              });
+              var data = await res.json();
+              if (!res.ok) throw new Error(data.error || 'Unable to update portal details.');
+              if (data.profile) state.profile = data.profile;
+            }
+            render();
+            showSettingsAlert('success', 'Portal details updated.');
+          } catch (err) {
+            showSettingsAlert('error', err.message);
+          }
+        });
+
+        document.getElementById('setPasscodeBtn').addEventListener('click', async function () {
+          var code = document.getElementById('passcodeInput').value.trim();
+          if (code.length < 4) {
+            showSettingsAlert('error', 'Choose a passcode with at least 4 characters.');
+            return;
+          }
+          try {
+            if (state.useLocalFallback) {
+              showSettingsAlert('error', 'Passcode lock requires the backend server.');
+              return;
+            }
+            var res = await fetch('/api/auth/passcode', {
+              method: 'POST',
+              headers: authHeaders(),
+              body: JSON.stringify({ passcode: code }),
+            });
+            var data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Unable to set passcode.');
+            state.hasPasscode = Boolean(data.hasPasscode);
+            if (data.token) {
+              state.creatorToken = data.token;
+              localStorage.setItem(CREATOR_TOKEN_KEY, data.token);
+              state.isUnlocked = true;
+            }
+            document.getElementById('passcodeInput').value = '';
+            render();
+            renderSettingsRemoveList();
+            showSettingsAlert(
+              'success',
+              'Publisher passcode enabled. Visitors can browse, only you can edit or remove.'
+            );
+          } catch (err) {
+            showSettingsAlert('error', err.message);
+          }
+        });
+
+        document.getElementById('clearPasscodeBtn').addEventListener('click', async function () {
+          try {
+            var res = await fetch('/api/auth/passcode', {
+              method: 'POST',
+              headers: authHeaders(),
+              body: JSON.stringify({ passcode: '' }),
+            });
+            var data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Unable to remove passcode.');
+            state.hasPasscode = false;
+            state.creatorToken = '';
+            localStorage.removeItem(CREATOR_TOKEN_KEY);
+            state.isUnlocked = true;
+            render();
+            renderSettingsRemoveList();
+            showSettingsAlert('success', 'Publisher passcode removed.');
+          } catch (err) {
+            showSettingsAlert('error', err.message);
+          }
+        });
+
+        document.getElementById('exportJsonBtn').addEventListener('click', function () {
+          var blob = new Blob([JSON.stringify({ profile: state.profile, items: state.items }, null, 2)], {
+            type: 'application/json',
+          });
+          var href = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = href;
+          var slug = state.profile.studioName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'proplay';
+          link.download = slug + '-backup.json';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(href);
+        });
+
+        document.getElementById('importJsonBtn').addEventListener('click', function () {
+          document.getElementById('importJsonInput').click();
+        });
+
+        document.getElementById('importJsonInput').addEventListener('change', async function (e) {
+          var file = e.target.files && e.target.files[0];
+          if (!file) return;
+          try {
+            var text = await file.text();
+            var parsed = JSON.parse(text);
+            var incoming = Array.isArray(parsed) ? parsed : parsed.items;
+            if (!Array.isArray(incoming)) throw new Error('Invalid backup file format.');
+            var res = await fetch('/api/items/import', {
+              method: 'POST',
+              headers: authHeaders(),
+              body: JSON.stringify({ items: incoming, mode: 'merge' }),
+            });
+            var data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Import failed.');
+            if (Array.isArray(data.items)) state.items = data.items;
+            render();
+            renderSettingsRemoveList();
+            showSettingsAlert('success', 'Imported ' + (data.importedCount || 0) + ' works.');
+          } catch (err) {
+            showSettingsAlert('error', err.message || 'Could not read that JSON file.');
+          } finally {
+            e.target.value = '';
+          }
+        });
+
+        // Unlock Modal Events
+        document.getElementById('closeUnlockBtn').addEventListener('click', closeUnlockModal);
+        document.getElementById('cancelUnlockBtn').addEventListener('click', closeUnlockModal);
+        document.getElementById('unlockModal').addEventListener('click', function (e) {
+          if (e.target === this) closeUnlockModal();
+        });
+        document.getElementById('unlockForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var errBox = document.getElementById('unlockErrorBox');
+          errBox.classList.add('hidden');
+          var passcode = document.getElementById('unlockPasscodeInput').value;
+          try {
+            var res = await fetch('/api/auth/unlock', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ passcode: passcode }),
+            });
+            var data = await res.json();
+            if (!res.ok || !data.unlocked) throw new Error(data.error || 'Incorrect passcode.');
+            state.creatorToken = data.token || '';
+            localStorage.setItem(CREATOR_TOKEN_KEY, state.creatorToken);
+            state.isUnlocked = true;
+            var next = state.pendingAction;
+            closeUnlockModal();
+            render();
+            if (next) next();
+          } catch (err) {
+            errBox.textContent = err.message || 'Incorrect passcode.';
+            errBox.classList.remove('hidden');
+          }
+        });
+
+        window.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            closeItemModal();
+            closeSettingsModal();
+            closeUnlockModal();
+          }
+        });
+
+        loadShowcase();
+      })();
+    </script>
+  </body>
+</html>

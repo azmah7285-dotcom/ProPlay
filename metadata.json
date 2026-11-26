@@ -1,0 +1,6 @@
+{
+  "name": "Playdeck",
+  "description": "A curated showcase hub to organize your games and websites and launch them directly in one click.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

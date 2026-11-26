@@ -1,0 +1,35 @@
+{
+  "profile": {
+    "studioName": "ProPlay",
+    "headline": "Instant-launch arcade & web builds.",
+    "subheadline": "Every game and website in one sleek darkroom hub. Click any tile to launch directly."
+  },
+  "passcodeHash": null,
+  "passcodeSalt": null,
+  "items": [
+    {
+      "id": "item-galaga",
+      "title": "Galaga",
+      "url": "https://gamaga.vercel.app/",
+      "category": "game",
+      "description": "Arcade space shooter where you pilot a starfighter against waves of descending alien squadrons.",
+      "coverImage": "/src/assets/images/game_galaga_arcade_1795684657356.jpg",
+      "featured": true,
+      "visits": 0,
+      "createdAt": "2026-11-26T01:17:00.000Z",
+      "updatedAt": "2026-11-26T01:17:00.000Z"
+    },
+    {
+      "id": "item-centipede",
+      "title": "Centipede",
+      "url": "https://centigame.vercel.app/",
+      "category": "game",
+      "description": "Fast-paced arcade shooter where you blast winding segmented centipedes across a mushroom field.",
+      "coverImage": "/src/assets/images/game_centipede_arcade_1795684657858.jpg",
+      "featured": false,
+      "visits": 0,
+      "createdAt": "2026-11-26T01:17:00.000Z",
+      "updatedAt": "2026-11-26T01:17:00.000Z"
+    }
+  ]
+}
