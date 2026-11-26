@@ -1,8 +1,10 @@
 import crypto from 'node:crypto';
 import dns from 'node:dns/promises';
+import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import net from 'node:net';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import zlib from 'node:zlib';
@@ -12,11 +14,21 @@ import express from 'express';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = Number(process.env.PORT) || 3000;
-const DATA_DIR = path.resolve(__dirname, 'data');
+const IS_VERCEL = Boolean(
+  process.env.VERCEL || process.env.VERCEL_ENV || process.env.AWS_LAMBDA_FUNCTION_NAME
+);
+
+const BUNDLED_DATA_FILE = path.resolve(__dirname, 'data', 'showcase.json');
+const DATA_DIR = IS_VERCEL
+  ? path.join(os.tmpdir(), 'proplay-data')
+  : path.resolve(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'showcase.json');
 const VERCEL_DEPLOY_DIR = path.resolve(__dirname, 'vercel-deploy');
 const VERCEL_CONFIG_JSON = JSON.stringify({ cleanUrls: true, trailingSlash: false }, null, 2);
-const TOKEN_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+const TOKEN_SECRET =
+  process.env.SESSION_SECRET ||
+  process.env.VERCEL_DEPLOYMENT_ID ||
+  crypto.createHash('sha256').update(__dirname).digest('hex');
 const MAX_COVER_DATA_URL_BYTES = 2_500_000;
 
 const CRC32_TABLE = (() => {
@@ -142,35 +154,78 @@ const DEFAULT_DATA = {
 };
 
 let writeQueue = Promise.resolve();
-let syncVercelDeployFolder = async () => {};
+let memoryDb = null;
+
+function sanitizeDbShape(parsed) {
+  return {
+    profile: {
+      studioName: parsed?.profile?.studioName || DEFAULT_DATA.profile.studioName,
+      headline: parsed?.profile?.headline || DEFAULT_DATA.profile.headline,
+      subheadline: parsed?.profile?.subheadline || DEFAULT_DATA.profile.subheadline,
+    },
+    passcodeHash: typeof parsed?.passcodeHash === 'string' ? parsed.passcodeHash : null,
+    passcodeSalt: typeof parsed?.passcodeSalt === 'string' ? parsed.passcodeSalt : null,
+    items: Array.isArray(parsed?.items) ? parsed.items : structuredClone(DEFAULT_DATA.items),
+  };
+}
 
 async function ensureDatabase() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
   try {
     const raw = await fs.readFile(DATA_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
-    return {
-      profile: {
-        studioName: parsed.profile?.studioName || DEFAULT_DATA.profile.studioName,
-        headline: parsed.profile?.headline || DEFAULT_DATA.profile.headline,
-        subheadline: parsed.profile?.subheadline || DEFAULT_DATA.profile.subheadline,
-      },
-      passcodeHash: typeof parsed.passcodeHash === 'string' ? parsed.passcodeHash : null,
-      passcodeSalt: typeof parsed.passcodeSalt === 'string' ? parsed.passcodeSalt : null,
-      items: Array.isArray(parsed.items) ? parsed.items : [],
-    };
+    const parsed = sanitizeDbShape(JSON.parse(raw));
+    memoryDb = structuredClone(parsed);
+    return parsed;
   } catch {
-    await fs.writeFile(DATA_FILE, JSON.stringify(DEFAULT_DATA, null, 2), 'utf8');
-    return structuredClone(DEFAULT_DATA);
+    // Try bundled data file next (e.g., cold start on Vercel serverless)
+  }
+
+  if (memoryDb) {
+    return structuredClone(memoryDb);
+  }
+
+  let initial = structuredClone(DEFAULT_DATA);
+  if (BUNDLED_DATA_FILE !== DATA_FILE) {
+    try {
+      const bundledRaw = await fs.readFile(BUNDLED_DATA_FILE, 'utf8');
+      initial = sanitizeDbShape(JSON.parse(bundledRaw));
+    } catch {
+      // Fallback to DEFAULT_DATA
+    }
+  }
+
+  memoryDb = structuredClone(initial);
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(DATA_FILE, JSON.stringify(initial, null, 2), 'utf8');
+  } catch {
+    // Ignore write failure on read-only environments
+  }
+  return initial;
+}
+
+async function syncVercelDeployFolder(db) {
+  if (IS_VERCEL) return;
+  try {
+    const html = await buildStandaloneHtml(db);
+    await fs.mkdir(VERCEL_DEPLOY_DIR, { recursive: true });
+    await fs.writeFile(path.join(VERCEL_DEPLOY_DIR, 'index.html'), html, 'utf8');
+    await fs.writeFile(path.join(VERCEL_DEPLOY_DIR, 'vercel.json'), VERCEL_CONFIG_JSON, 'utf8');
+  } catch (err) {
+    console.warn('Skipping vercel-deploy folder sync:', err?.message || err);
   }
 }
 
 async function saveDatabase(db) {
+  memoryDb = structuredClone(db);
   writeQueue = writeQueue.then(async () => {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    const tempFile = `${DATA_FILE}.tmp`;
-    await fs.writeFile(tempFile, JSON.stringify(db, null, 2), 'utf8');
-    await fs.rename(tempFile, DATA_FILE);
+    try {
+      await fs.mkdir(DATA_DIR, { recursive: true });
+      const tempFile = `${DATA_FILE}.tmp`;
+      await fs.writeFile(tempFile, JSON.stringify(db, null, 2), 'utf8');
+      await fs.rename(tempFile, DATA_FILE);
+    } catch (err) {
+      console.warn('Unable to persist showcase database to disk:', err?.message || err);
+    }
     await syncVercelDeployFolder(db);
   });
   return writeQueue;
@@ -250,7 +305,13 @@ function verifyCreatorToken(token, salt) {
   return crypto.timingSafeEqual(bufA, bufB);
 }
 
-async function requireCreatorAuth(req, res, next) {
+function asyncHandler(fn) {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
+
+const requireCreatorAuth = asyncHandler(async (req, res, next) => {
   const db = await ensureDatabase();
   if (!db.passcodeHash || !db.passcodeSalt) {
     next();
@@ -262,7 +323,7 @@ async function requireCreatorAuth(req, res, next) {
     return;
   }
   next();
-}
+});
 
 function isPrivateIp(ip) {
   if (net.isIPv4(ip)) {
@@ -321,17 +382,23 @@ async function inlineCoverAsset(coverImage) {
   }
   const safeRelative = coverImage.replace(/^\/+/, '');
   if (safeRelative.includes('..')) return '';
-  const fullPath = path.resolve(__dirname, safeRelative);
-  const allowedRoot = path.resolve(__dirname, 'src/assets/images');
-  if (!fullPath.startsWith(allowedRoot)) return '';
-  try {
-    const buffer = await fs.readFile(fullPath);
-    const ext = path.extname(fullPath).toLowerCase();
-    const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
-    return `data:${mime};base64,${buffer.toString('base64')}`;
-  } catch {
-    return '';
+
+  const candidates = [
+    path.resolve(__dirname, safeRelative),
+    path.resolve(__dirname, 'dist', safeRelative),
+  ];
+
+  for (const fullPath of candidates) {
+    try {
+      const buffer = await fs.readFile(fullPath);
+      const ext = path.extname(fullPath).toLowerCase();
+      const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+      return `data:${mime};base64,${buffer.toString('base64')}`;
+    } catch {
+      // try next path
+    }
   }
+  return '';
 }
 
 function escapeHtmlText(str) {
@@ -918,25 +985,24 @@ async function buildStandaloneHtml(db) {
 </html>`;
 }
 
-async function startServer() {
-  const app = express();
-  app.use(express.json({ limit: '3mb' }));
+const app = express();
+app.use(express.json({ limit: '3mb' }));
 
-  app.get('/api/items', async (_req, res) => {
-    try {
-      const db = await ensureDatabase();
-      res.json({
-        items: db.items,
-        profile: db.profile,
-        hasPasscode: Boolean(db.passcodeHash),
-      });
-    } catch (error) {
-      console.error('Failed to read showcase database:', error);
-      res.status(500).json({ error: 'Unable to load showcase items.' });
-    }
-  });
+app.get(
+  '/api/items',
+  asyncHandler(async (_req, res) => {
+    const db = await ensureDatabase();
+    res.json({
+      items: db.items,
+      profile: db.profile,
+      hasPasscode: Boolean(db.passcodeHash),
+    });
+  })
+);
 
-  app.post('/api/auth/verify', async (req, res) => {
+app.post(
+  '/api/auth/verify',
+  asyncHandler(async (req, res) => {
     const db = await ensureDatabase();
     if (!db.passcodeHash || !db.passcodeSalt) {
       res.json({ unlocked: true, hasPasscode: false });
@@ -945,9 +1011,12 @@ async function startServer() {
     const token = req.header('x-creator-token');
     const unlocked = verifyCreatorToken(token, db.passcodeSalt);
     res.json({ unlocked, hasPasscode: true });
-  });
+  })
+);
 
-  app.post('/api/auth/unlock', async (req, res) => {
+app.post(
+  '/api/auth/unlock',
+  asyncHandler(async (req, res) => {
     const db = await ensureDatabase();
     if (!db.passcodeHash || !db.passcodeSalt) {
       res.json({ unlocked: true, token: '' });
@@ -963,9 +1032,13 @@ async function startServer() {
     }
     const token = createCreatorToken(db.passcodeSalt);
     res.json({ unlocked: true, token });
-  });
+  })
+);
 
-  app.post('/api/auth/passcode', requireCreatorAuth, async (req, res) => {
+app.post(
+  '/api/auth/passcode',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const passcode = typeof req.body?.passcode === 'string' ? req.body.passcode.trim() : '';
     const db = await ensureDatabase();
 
@@ -989,9 +1062,13 @@ async function startServer() {
 
     const token = createCreatorToken(salt);
     res.json({ hasPasscode: true, token });
-  });
+  })
+);
 
-  app.patch('/api/profile', requireCreatorAuth, async (req, res) => {
+app.patch(
+  '/api/profile',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const db = await ensureDatabase();
     const studioName =
       typeof req.body?.studioName === 'string' ? req.body.studioName.trim().slice(0, 48) : '';
@@ -1012,9 +1089,13 @@ async function startServer() {
     };
     await saveDatabase(db);
     res.json({ profile: db.profile });
-  });
+  })
+);
 
-  app.post('/api/items', requireCreatorAuth, async (req, res) => {
+app.post(
+  '/api/items',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const title = typeof req.body?.title === 'string' ? req.body.title.trim().slice(0, 80) : '';
     const url = normalizeExternalUrl(req.body?.url);
     const category = req.body?.category === 'website' ? 'website' : 'game';
@@ -1057,16 +1138,24 @@ async function startServer() {
     db.items.unshift(newItem);
     await saveDatabase(db);
     res.status(201).json({ item: newItem, items: db.items });
-  });
+  })
+);
 
-  app.post('/api/items/remove-websites', requireCreatorAuth, async (_req, res) => {
+app.post(
+  '/api/items/remove-websites',
+  requireCreatorAuth,
+  asyncHandler(async (_req, res) => {
     const db = await ensureDatabase();
     db.items = db.items.filter((item) => item.category !== 'website');
     await saveDatabase(db);
     res.json({ items: db.items });
-  });
+  })
+);
 
-  app.post('/api/items/import', requireCreatorAuth, async (req, res) => {
+app.post(
+  '/api/items/import',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const incoming = req.body?.items;
     const mode = req.body?.mode === 'replace' ? 'replace' : 'merge';
     if (!Array.isArray(incoming)) {
@@ -1111,9 +1200,13 @@ async function startServer() {
     }
     await saveDatabase(db);
     res.json({ items: db.items, importedCount: sanitized.length });
-  });
+  })
+);
 
-  app.patch('/api/items/:id', requireCreatorAuth, async (req, res) => {
+app.patch(
+  '/api/items/:id',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const db = await ensureDatabase();
     const index = db.items.findIndex((item) => item.id === id);
@@ -1172,9 +1265,13 @@ async function startServer() {
     db.items[index] = updated;
     await saveDatabase(db);
     res.json({ item: updated, items: db.items });
-  });
+  })
+);
 
-  app.delete('/api/items/:id', requireCreatorAuth, async (req, res) => {
+app.delete(
+  '/api/items/:id',
+  requireCreatorAuth,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const db = await ensureDatabase();
     const filtered = db.items.filter((item) => item.id !== id);
@@ -1185,9 +1282,12 @@ async function startServer() {
     db.items = filtered;
     await saveDatabase(db);
     res.json({ items: db.items });
-  });
+  })
+);
 
-  app.post('/api/items/:id/visit', async (req, res) => {
+app.post(
+  '/api/items/:id/visit',
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const db = await ensureDatabase();
     const target = db.items.find((item) => item.id === id);
@@ -1198,9 +1298,12 @@ async function startServer() {
     target.visits = (target.visits || 0) + 1;
     await saveDatabase(db);
     res.json({ visits: target.visits });
-  });
+  })
+);
 
-  app.post('/api/metadata', async (req, res) => {
+app.post(
+  '/api/metadata',
+  asyncHandler(async (req, res) => {
     const normalizedUrl = normalizeExternalUrl(req.body?.url);
     if (!normalizedUrl) {
       res.status(400).json({ error: 'Enter a valid http/https website URL first.' });
@@ -1278,75 +1381,92 @@ async function startServer() {
         normalizedUrl,
       });
     }
-  });
+  })
+);
 
-  syncVercelDeployFolder = async (db) => {
+app.get(
+  '/api/export/html',
+  asyncHandler(async (_req, res) => {
+    const db = await ensureDatabase();
     const html = await buildStandaloneHtml(db);
-    await fs.mkdir(VERCEL_DEPLOY_DIR, { recursive: true });
-    await fs.writeFile(path.join(VERCEL_DEPLOY_DIR, 'index.html'), html, 'utf8');
-    await fs.writeFile(path.join(VERCEL_DEPLOY_DIR, 'vercel.json'), VERCEL_CONFIG_JSON, 'utf8');
-  };
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="proplay.html"');
+    res.send(html);
+  })
+);
 
-  const initialDb = await ensureDatabase();
-  await syncVercelDeployFolder(initialDb);
+app.get(
+  '/api/export/vercel',
+  asyncHandler(async (_req, res) => {
+    const db = await ensureDatabase();
+    const html = await buildStandaloneHtml(db);
+    const zipBuffer = createZipArchive([
+      { name: 'proplay/index.html', content: Buffer.from(html, 'utf8') },
+      { name: 'proplay/vercel.json', content: Buffer.from(VERCEL_CONFIG_JSON, 'utf8') },
+    ]);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="proplay-vercel.zip"');
+    res.send(zipBuffer);
+  })
+);
 
-  app.get('/api/export/html', async (_req, res) => {
-    try {
-      const db = await ensureDatabase();
-      const html = await buildStandaloneHtml(db);
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Content-Disposition', 'attachment; filename="proplay.html"');
-      res.send(html);
-    } catch (error) {
-      console.error('Failed to export HTML:', error);
-      res.status(500).json({ error: 'Unable to export HTML file.' });
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'API route not found.' });
+});
+
+const distDir = path.resolve(__dirname, 'dist');
+const distIndex = path.join(distDir, 'index.html');
+const rootIndex = path.resolve(__dirname, 'index.html');
+const srcAssetsDir = path.resolve(__dirname, 'src', 'assets');
+const distAssetsDir = path.resolve(__dirname, 'dist', 'src', 'assets');
+
+if (fsSync.existsSync(srcAssetsDir)) {
+  app.use('/src/assets', express.static(srcAssetsDir));
+}
+if (fsSync.existsSync(distAssetsDir)) {
+  app.use('/src/assets', express.static(distAssetsDir));
+}
+if (process.env.NODE_ENV === 'production' && fsSync.existsSync(distDir)) {
+  app.use(express.static(distDir));
+}
+
+app.get(
+  '*',
+  asyncHandler(async (_req, res) => {
+    if (process.env.NODE_ENV === 'production' && fsSync.existsSync(distIndex)) {
+      res.sendFile(distIndex);
+      return;
     }
-  });
-
-  app.get('/api/export/vercel', async (_req, res) => {
-    try {
-      const db = await ensureDatabase();
-      const html = await buildStandaloneHtml(db);
-      const zipBuffer = createZipArchive([
-        { name: 'proplay/index.html', content: Buffer.from(html, 'utf8') },
-        { name: 'proplay/vercel.json', content: Buffer.from(VERCEL_CONFIG_JSON, 'utf8') },
-      ]);
-      res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', 'attachment; filename="proplay-vercel.zip"');
-      res.send(zipBuffer);
-    } catch (error) {
-      console.error('Failed to export Vercel folder:', error);
-      res.status(500).json({ error: 'Unable to export Vercel folder.' });
+    if (fsSync.existsSync(rootIndex)) {
+      res.sendFile(rootIndex);
+      return;
     }
-  });
+    if (fsSync.existsSync(distIndex)) {
+      res.sendFile(distIndex);
+      return;
+    }
+    const db = await ensureDatabase();
+    const html = await buildStandaloneHtml(db);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  })
+);
 
-  app.use('/api', (_req, res) => {
-    res.status(404).json({ error: 'API route not found.' });
-  });
+app.use((err, _req, res, _next) => {
+  console.error('Unhandled server error:', err);
+  if (res.headersSent) return;
+  res.status(500).json({ error: 'Internal server error.' });
+});
 
-  if (process.env.NODE_ENV === 'production') {
-    const distDir = path.resolve(__dirname, 'dist');
-    app.use(express.static(distDir));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(distDir, 'index.html'));
-    });
-  } else {
-    app.use('/src/assets', express.static(path.resolve(__dirname, 'src/assets')));
-    app.get('/', (_req, res) => {
-      res.sendFile(path.resolve(__dirname, 'index.html'));
-    });
-    app.get('*', (_req, res) => {
-      res.sendFile(path.resolve(__dirname, 'index.html'));
-    });
-  }
-
+if (!IS_VERCEL) {
   const httpServer = http.createServer(app);
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`ProPlay server listening on http://localhost:${PORT}`);
   });
+
+  ensureDatabase()
+    .then((db) => syncVercelDeployFolder(db))
+    .catch((err) => console.warn('Initial vercel-deploy sync warning:', err?.message || err));
 }
 
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+export default app;
